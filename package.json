@@ -1,0 +1,17 @@
+{
+  "name": "rok",
+  "version": "0.1.0",
+  "description": "A simple to use traditional class for storing stuff",
+  "main": "index.js",
+  "scripts": {
+    "test": "set -e; for FILE in test/*.js; do node $FILE; done"
+  },
+  "author": "Andrew Chilton <andychilton@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "inherits": "^2.0.3"
+  },
+  "devDependencies": {
+    "tape": "^4.6.2"
+  }
+}
