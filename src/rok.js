@@ -9,17 +9,20 @@ function Rok() {
   this.listeners = []
 }
 
+// return a list of props/store names (used in `reset()`, `extract()` and `restore()`)
+Rok.prototype.props = function props() {
+  return []
+}
+Rok.prototype.stores = function stores() {
+  return []
+}
+
 // override this in your derived class so you can do something more specific
 Rok.prototype._resetProps = function _resetProps() {
   // do nothing
 }
 
-  // return a list of store names (used in `reset()`, `extract()` and `restore()`)
-Rok.prototype.stores = function stores() {
-  return []
-}
-
-  // override this in your derived class so you can do something more specific
+// override this in your derived class so you can do something more specific
 Rok.prototype._resetStores = function _resetStores() {
   this.stores().forEach(function(name) {
     this[name].reset()
