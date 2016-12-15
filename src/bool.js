@@ -10,39 +10,34 @@ var Rok = require('./rok.js')
 
 // --------------------------------------------------------------------------------------------------------------------
 
-function RokText() {
+function RokBoolean() {
   Rok.call(this)
 
   // simply call reset to set up our properties
   this.reset()
 }
-inherits(RokText, Rok)
+inherits(RokBoolean, Rok)
 
-RokText.prototype.props = function props() {
-  return [ 'text' ]
+RokBoolean.prototype.props = function props() {
+  return [ 'bool' ]
 }
 
-RokText.prototype._resetProps = function _resetProps() {
+RokBoolean.prototype._resetProps = function _resetProps() {
   // called by Rok.reset()
-  this.text = ''
+  this.bool = false
 }
 
-RokText.prototype.get = function get() {
-  return this.text
+RokBoolean.prototype.get = function get() {
+  return this.bool
 }
 
-RokText.prototype.set = function set(text) {
-  this.text = text
+RokBoolean.prototype.set = function set(b) {
+  this.bool = !!b
   this.notify()
-}
-
-var isNotEmptyString = new RegExp(/\S/);
-RokText.prototype.hasAnything = function hasAnything() {
-  return isNotEmptyString.test(this.text)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-module.exports = RokText
+module.exports = RokBoolean
 
 // --------------------------------------------------------------------------------------------------------------------
