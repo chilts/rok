@@ -10,7 +10,7 @@ var Rok = require('./rok.js')
 
 // --------------------------------------------------------------------------------------------------------------------
 
-Function RokObject() {
+function RokObject() {
   Rok.call(this)
 
   // simply call reset to set up our properties
