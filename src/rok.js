@@ -13,12 +13,22 @@ function Rok() {
 Rok.prototype.props = function props() {
   return []
 }
+
+Rok.prototype.objects = function objects() {
+  return []
+}
+
 Rok.prototype.stores = function stores() {
   return []
 }
 
 // override this in your derived class so you can do something more specific
 Rok.prototype._resetProps = function _resetProps() {
+  // do nothing
+}
+
+// override this in your derived class so you can do something more specific
+Rok.prototype._resetObjects = function _resetObjects() {
   // do nothing
 }
 
@@ -31,6 +41,7 @@ Rok.prototype._resetStores = function _resetStores() {
 
 Rok.prototype.reset = function reset() {
   this._resetProps()
+  this._resetObjects()
   this._resetStores()
   this.notify()
 }
@@ -41,6 +52,11 @@ Rok.prototype.extract = function extract() {
   // get a copy of all properties
   this.props().forEach(function(name) {
     data[name] = this[name]
+  }.bind(this))
+
+  // get a deep-copy of all objects
+  this.objects().forEach(function(name) {
+    data[name] = JSON.parse(JSON.stringify(this[name]))
   }.bind(this))
 
   // get a copy of all sub-stores
@@ -63,9 +79,13 @@ Rok.prototype.restore = function restore(data) {
     }
   }.bind(this))
 
+  // restore all objects
+  this.objects().forEach(function(name) {
+    this[name] = JSON.parse(JSON.stringify(data[name]));
+  }.bind(this))
+
   // restore all sub-stores
   this.stores().forEach(function(name) {
-    console.log('name=' + name)
     this[name].restore(data[name])
   }.bind(this))
 
