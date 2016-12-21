@@ -19,8 +19,8 @@ function RokEnum(name, title, opts) {
   // set some of the properties from the incoming args
   this.name  = name
   this.title = title
-  this.meta  = obj.meta || null
-  this.max   = obj.max || null
+  this.meta  = opts.meta || null
+  this.max   = opts.max || null
 
   // start off with empty 'valid' and 'selected'
   this.valid = {}
