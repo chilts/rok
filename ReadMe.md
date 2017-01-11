@@ -12,6 +12,7 @@ Rok has models for:
 * boolean (Rok.Bool)
 * object (Rob.Obj)
 * enum (Rob.Enum)
+* date range (Rob.DateRange)
 
 More docs to come on each of these.
 
