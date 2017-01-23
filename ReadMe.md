@@ -9,6 +9,7 @@ There are so many other stores out there, so why not?
 Rok has models for:
 
 * text (Rok.Text)
+* number (Rok.Number)
 * boolean (Rok.Bool)
 * object (Rob.Obj)
 * enum (Rob.Enum)

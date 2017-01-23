@@ -8,6 +8,7 @@ var Rok = require('./src/rok.js')
 // --------------------------------------------------------------------------------------------------------------------
 
 Rok.Text      = require('./src/text.js')
+Rok.Number    = require('./src/number.js')
 Rok.Bool      = require('./src/bool.js')
 Rok.Object    = require('./src/obj.js')
 Rok.Enum      = require('./src/enum.js')
