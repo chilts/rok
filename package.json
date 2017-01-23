@@ -1,6 +1,6 @@
 {
   "name": "rok",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A simple to use traditional class for storing stuff",
   "main": "index.js",
   "scripts": {
