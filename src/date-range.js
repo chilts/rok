@@ -100,13 +100,14 @@ RokDateRange.prototype.props = function props() {
 }
 
 RokDateRange.prototype.objects = function props() {
-  return [ 'meta' ]
+  return [ 'meta', 'data' ]
 }
 
 // Called by Rok.reset().
 RokDateRange.prototype._resetProps = function _resetProps() {
   this.start = null
   this.end = null
+  this.data = {}
 }
 
 RokDateRange.prototype.getTitle = function getTitle() {
@@ -128,6 +129,10 @@ RokDateRange.prototype.getStart = function getStart() {
 
 RokDateRange.prototype.getEnd = function getEnd() {
   return this.end
+}
+
+RokDateRange.prototype.getData = function getData() {
+  return this.data
 }
 
 // If you provide a value that can't be converted to a date, `start` will be set to null. An error is returned if there
@@ -194,6 +199,12 @@ RokDateRange.prototype.setEnd = function setEnd(end) {
   this.end = dates.string(d)
   this.notify()
   return null
+}
+
+// Data is just a grab bag of properties you want to store with the date range.
+RokDateRange.prototype.setData = function setEnd(key, val) {
+  this.data[key] = val
+  this.notify()
 }
 
 // --------------------------------------------------------------------------------------------------------------------
