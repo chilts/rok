@@ -83,20 +83,21 @@ var dates = {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-function RokDateRange(title, opts) {
+function RokDateRange(name, title, opts) {
   Rok.call(this)
 
   // simply call reset to set up our properties
   this.reset()
 
   // set some of the properties from the incoming args
+  this.name = name
   this.title = title
   this.meta = opts.meta || {}
 }
 inherits(RokDateRange, Rok)
 
 RokDateRange.prototype.props = function props() {
-  return [ 'title', 'start', 'end' ]
+  return [ 'name', 'title', 'start', 'end' ]
 }
 
 RokDateRange.prototype.objects = function props() {
@@ -108,6 +109,15 @@ RokDateRange.prototype._resetProps = function _resetProps() {
   this.start = null
   this.end = null
   this.data = {}
+}
+
+RokDateRange.prototype.getName = function getName() {
+  return this.name
+}
+
+RokDateRange.prototype.setName = function setName(name) {
+  this.name = name
+  this.notify()
 }
 
 RokDateRange.prototype.getTitle = function getTitle() {
