@@ -83,7 +83,7 @@ var dates = {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-function RokDateRange(name, title, opts) {
+function RokDateRange(name, title, opts, meta) {
   Rok.call(this)
 
   // simply call reset to set up our properties
@@ -92,7 +92,12 @@ function RokDateRange(name, title, opts) {
   // set some of the properties from the incoming args
   this.name = name
   this.title = title
-  this.meta = opts.meta || {}
+
+  // currently there are no opts that we use
+  this.opts = opts || {}
+
+  // just remember the meta without interpreting it in any way
+  this.meta = meta || {}
 }
 inherits(RokDateRange, Rok)
 

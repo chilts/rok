@@ -186,7 +186,7 @@ RokEnum.prototype.toggle = function toggle(name) {
     throw new Error("RokEnum: trying to toggle name '" + name +  "' for enum '" + this.name + "' when it is not a valid enumeration")
   }
 
-  // just call unset() or set() (which both emit 'update')
+  // just call unset() or set() (which both emit 'notify')
   if ( name in this.selected ) {
     this.unset(name)
   }
@@ -201,7 +201,7 @@ RokEnum.prototype.setTo = function setTo(name, to) {
     throw new Error("RokEnum: trying to setTo name '" + name +  "' for enum '" + this.name + "' when it is not a valid enumeration")
   }
 
-  // just call unset() or set() (which both emit 'update')
+  // just call unset() or set() (which both emit 'notify')
   if ( to ) {
     this.set(name)
   }
