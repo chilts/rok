@@ -18,6 +18,10 @@ function RokBoolean() {
 }
 inherits(RokBoolean, Rok)
 
+RokBoolean.prototype.type = function type() {
+  return 'Bool'
+}
+
 RokBoolean.prototype.props = function props() {
   return [ 'bool' ]
 }

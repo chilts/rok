@@ -18,6 +18,10 @@ function RokNumber() {
 }
 inherits(RokNumber, Rok)
 
+RokNumber.prototype.type = function type() {
+  return 'Number'
+}
+
 RokNumber.prototype.props = function props() {
   return [ 'val' ]
 }

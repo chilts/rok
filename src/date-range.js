@@ -14,16 +14,22 @@ var errInvalidDate = new Error("Invalid date")
 var errInvalidStart = new Error("Invalid start date, it should be before or equal to end")
 var errInvalidEnd = new Error("Invalid end date, it should be equal to or after start")
 
+var months = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ]
+
 // Source: http://stackoverflow.com/questions/497790
 var dates = {
   convert: function(d) {
+    // if we have nothing, return nothing
+    if ( !d ) return null
+
     // Converts the date in d to a date-object. The input can be:
     //   a date object: returned without modification
     //  an array      : Interpreted as [year, month, day]. NOTE: month is 1-12.
     //   a number     : Interpreted as number of milliseconds
     //                  since 1 Jan 1970 (a timestamp) 
     //   a string     : Any format supported by the javascript engine, like
-    //                  "YYYY/MM/DD", "MM/DD/YYYY", "Jan 31 2009" etc.
+    //                  "YYYY/MM/DD", "MM/DD/YYYY", "Jan 31 2009" etc, but not
+    //                  "DD/MM/YYYY" since they don't like that.
     //  an object     : Interpreted as an object with year, month and date
     //                  attributes. NOTE: month is 1-12
     return (
@@ -37,7 +43,7 @@ var dates = {
         ? new Date(d)
         : typeof d === "object"
         ? new Date(d.year, d.month - 1, d.date)
-        : NaN
+        : null
     );
   },
   compare: function(a, b) {
@@ -75,10 +81,69 @@ var dates = {
   },
   string: function(d) {
     d = this.convert(d)
-    var m = d.getUTCMonth() + 1
+    var mth = d.getUTCMonth() + 1
     var day = d.getUTCDate()
-    return d ? '' + (1900 + d.getYear()) + '-' + ( m < 10 ? '0' + m : m ) + '-' + ( day < 10 ? '0' + day : day ) : null
+    var year = 1900 + d.getYear()
+    return d ? '' + year + '-' + this.pad(mth) + '-' + this.pad(day) : ''
   },
+  iso: function(d) {
+    d = this.convert(d)
+    var mth = d.getUTCMonth() + 1
+    var day = d.getUTCDate()
+    var year = 1900 + d.getYear()
+    return d ? '' + year + '-' + this.pad(mth) + '-' + this.pad(day) : ''
+  },
+  title: function(d) {
+    d = this.convert(d)
+    var mth = d.getUTCMonth() + 1
+    var day = d.getUTCDate()
+    var year = 1900 + d.getYear()
+    return d ? '' + this.pad(day) + '/' + this.pad(mth) + '/' + year : ''
+  },
+  pad: function(n) {
+    if ( n < 10 ) {
+      return '0' + n
+    }
+    return '' + n
+  },
+  isValidDDsMMsYYYY: function(str) {
+    // is Valid DD/MM/YYYY or D/M/YYYY ?
+
+    var m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)
+    var date
+    if ( !m ) {
+      return false
+    }
+
+    // make sure these are numbers (and if an invalid number, should end up being 0)
+    var day = m[1] | 0
+    var month = m[2] | 0
+    var year = m[3] | 0
+
+    if ( month < 1 || month > 12 ) {
+      return false
+    }
+
+    if ( day < 1 || day > 31 ) {
+      return false
+    }
+
+    // check for leap year day first
+    if ( this.isLeapYear(year) ) {
+      if ( month === 2 && day > 29 ) {
+        return false
+      }
+    }
+
+    if ( day > months[month-1] ) {
+      return false
+    }
+
+    return year + '-' + this.pad(month) + '-' + this.pad(day)
+  },
+  isLeapYear: function(year) {
+    return ((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0);
+  }
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -101,25 +166,31 @@ function RokDateRange(name, title, opts, meta) {
 }
 inherits(RokDateRange, Rok)
 
+RokDateRange.prototype.type = function type() {
+  return 'DateRange'
+}
+
 RokDateRange.prototype.props = function props() {
-  return [ 'name', 'title', 'start', 'end' ]
+  return [ 'name', 'title', 'start', 'end', 'editStart', 'editEnd' ]
 }
 
 RokDateRange.prototype.objects = function props() {
-  return [ 'meta', 'data' ]
+  return [ 'opts', 'meta' ]
 }
 
 // Called by Rok.reset().
 RokDateRange.prototype._resetProps = function _resetProps() {
   this.start = null
   this.end = null
-  this.data = {}
+  this.editStart = ''
+  this.editEnd = ''
 }
 
 RokDateRange.prototype.getName = function getName() {
   return this.name
 }
 
+// shouldn't need to use this since it's set in the constructor
 RokDateRange.prototype.setName = function setName(name) {
   this.name = name
   this.notify()
@@ -129,6 +200,7 @@ RokDateRange.prototype.getTitle = function getTitle() {
   return this.title
 }
 
+// shouldn't need to use this since it's set in the constructor
 RokDateRange.prototype.setTitle = function setTitle(title) {
   this.title = title
   this.notify()
@@ -138,20 +210,34 @@ RokDateRange.prototype.getMeta = function getMeta() {
   return this.meta
 }
 
+// shouldn't need to use this since it's set in the constructor
+RokDateRange.prototype.setTitle = function setTitle(title) {
+  this.title = title
+  this.notify()
+}
+
+// shouldn't need to use this since it's set in the constructor
+RokDateRange.prototype.setOpts = function setOpts(opts) {
+  this.opts = opts
+  this.notify()
+}
+
+RokDateRange.prototype.getOpts = function getOpts() {
+  return this.opts
+}
+
+// shouldn't need to use this since it's set in the constructor
+RokDateRange.prototype.setMeta = function setMeta(meta) {
+  this.meta = meta
+  this.notify()
+}
+
 RokDateRange.prototype.getStart = function getStart() {
   return this.start
 }
 
-RokDateRange.prototype.getEnd = function getEnd() {
-  return this.end
-}
-
-RokDateRange.prototype.getData = function getData() {
-  return this.data
-}
-
 // If you provide a value that can't be converted to a date, `start` will be set to null. An error is returned if there
-// was a problem. null is return upon success.
+// was a problem. null is returned upon success.
 RokDateRange.prototype.setStart = function setStart(start) {
   var d = dates.convert(start)
   console.log('d:' + d)
@@ -165,7 +251,8 @@ RokDateRange.prototype.setStart = function setStart(start) {
 
   // if there is no end date, then we don't need to compare
   if ( !this.end ) {
-    this.start = dates.string(d)
+    this.start = dates.iso(d)
+    this.editStart = dates.title(d)
     this.notify()
     return null
   }
@@ -178,9 +265,14 @@ RokDateRange.prototype.setStart = function setStart(start) {
   }
 
   // all good
-  this.start = dates.string(d)
+  this.start = dates.iso(d)
+  this.editStart = dates.title(d)
   this.notify()
   return null
+}
+
+RokDateRange.prototype.getEnd = function getEnd() {
+  return this.end
 }
 
 // If you provide a value that can't be converted to a date, `end` will be set to null. An error is returned if there
@@ -198,7 +290,8 @@ RokDateRange.prototype.setEnd = function setEnd(end) {
 
   // if there is no start date, then we don't need to compare
   if ( !this.start ) {
-    this.end = dates.string(d)
+    this.end = dates.iso(d)
+    this.editEnd = dates.title(d)
     this.notify()
     return null
   }
@@ -211,15 +304,101 @@ RokDateRange.prototype.setEnd = function setEnd(end) {
   }
 
   // all good
-  this.end = dates.string(d)
+  this.end = dates.iso(d)
+  this.editEnd = dates.title(d)
   this.notify()
   return null
 }
 
-// Data is just a grab bag of properties you want to store with the date range.
-RokDateRange.prototype.setData = function setEnd(key, val) {
-  this.data[key] = val
+RokDateRange.prototype.applyEditStart = function applyEditStart() {
+  // okay, whatever we have in editStart, we need to set it into the start
+  var str = this.editStart
+  console.log('got start = ' + str)
+
+  var iso = dates.isValidDDsMMsYYYY(str)
+  if ( iso ) {
+    this.start = iso
+    this.editStart = dates.title(iso)
+  }
+  else {
+    this.start = null
+  }
+
+  this.setStart(iso)
   this.notify()
+}
+
+RokDateRange.prototype.applyEditEnd = function applyEditEnd() {
+  // okay, whatever we have in editEnd, we need to set it into the end
+  var str = this.editEnd
+  console.log('got end = ' + str)
+
+  var iso = dates.isValidDDsMMsYYYY(str)
+  if ( iso ) {
+    this.end = iso
+    this.editEnd = dates.title(iso)
+  }
+  else {
+    this.end = null
+  }
+
+  this.notify()
+}
+
+RokDateRange.prototype.setEditStart = function setEditStart(str) {
+  // always set what we've been given (exactly as they gave it)
+  this.editStart = str
+  console.log ('>> date=' + str)
+  this.notify()
+}
+
+RokDateRange.prototype.getEditStart = function getEditStart() {
+  return this.editStart
+}
+
+RokDateRange.prototype.setEditEnd = function setEditEnd(str) {
+  // always set what we've been given (exactly as they gave it)
+  this.editEnd = str
+  console.log ('>> date=' + str)
+  this.notify()
+}
+
+RokDateRange.prototype.getEditEnd = function getEditEnd() {
+  return this.editEnd
+}
+
+RokDateRange.prototype.today = function today() {
+  return dates.iso(new Date())
+}
+
+RokDateRange.prototype.min = function min(a, b) {
+  a = dates.convert(a)
+  b = dates.convert(b)
+  if ( !a ) return dates.iso(b)
+  if ( !b ) return dates.iso(a)
+  if ( a.getTime() < b.getTime() ) {
+    return dates.iso(a)
+  }
+  return dates.iso(b)
+}
+
+RokDateRange.prototype.max = function max(a, b) {
+  a = dates.convert(a)
+  b = dates.convert(b)
+  if ( !a ) return dates.iso(b)
+  if ( !b ) return dates.iso(a)
+  if ( a.getTime() > b.getTime() ) {
+    return dates.iso(a)
+  }
+  return dates.iso(b)
+}
+
+RokDateRange.prototype.isValidEditStart = function isValidEditStart() {
+  return dates.isValidDDsMMsYYYY(this.editStart)
+}
+
+RokDateRange.prototype.isValidEditEnd = function isValidEditEnd() {
+  return dates.isValidDDsMMsYYYY(this.editEnd)
 }
 
 // --------------------------------------------------------------------------------------------------------------------

@@ -30,6 +30,10 @@ function RokEnum(name, title, opts) {
 }
 inherits(RokEnum, Rok)
 
+RokEnum.prototype.type = function type() {
+  return 'Enum'
+}
+
 RokEnum.prototype.props = function props() {
   return [ 'name', 'title', 'max', ]
 }
