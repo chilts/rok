@@ -130,11 +130,12 @@ var dates = {
 
     // check for leap year day first
     if ( this.isLeapYear(year) ) {
-      if ( month === 2 && day > 29 ) {
-        return false
+      if ( month === 2 ) {
+        return day <= 29
       }
     }
 
+    // check against the regular months
     if ( day > months[month-1] ) {
       return false
     }
@@ -394,10 +395,16 @@ RokDateRange.prototype.max = function max(a, b) {
 }
 
 RokDateRange.prototype.isValidEditStart = function isValidEditStart() {
+  if ( this.editStart === '' ) {
+    return true
+  }
   return dates.isValidDDsMMsYYYY(this.editStart)
 }
 
 RokDateRange.prototype.isValidEditEnd = function isValidEditEnd() {
+  if ( this.editEnd === '' ) {
+    return true
+  }
   return dates.isValidDDsMMsYYYY(this.editEnd)
 }
 
