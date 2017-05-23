@@ -311,6 +311,20 @@ RokDateRange.prototype.setEnd = function setEnd(end) {
   return null
 }
 
+RokDateRange.prototype.removeStart = function removeStart() {
+  console.log('Rok.DateRange.removeStart()')
+  this.start = null
+  this.editStart = ''
+  this.notify()
+}
+
+RokDateRange.prototype.removeEnd = function removeEnd() {
+  console.log('Rok.DateRange.removeEnd()')
+  this.end = null
+  this.editEnd = ''
+  this.notify()
+}
+
 RokDateRange.prototype.applyEditStart = function applyEditStart() {
   // okay, whatever we have in editStart, we need to set it into the start
   var str = this.editStart
