@@ -116,6 +116,18 @@ RokEnum.prototype.getSelectedAsObj = function getSelectedAsObj() {
   return selected
 }
 
+// returns just the string of the one selected, or null if none are selected
+RokEnum.prototype.getSelectedAsString = function getSelectedAsString() {
+  if ( this.countSelected === 0 ) {
+    return null
+  }
+  if ( this.countSelected > 1 ) {
+    throw new Error("Rok.Enum: can't get selected as a string if more than one are selected")
+  }
+
+  return this.getAllSelected()[0]
+}
+
 RokEnum.prototype.isAllowed = function isAllowed(name) {
   return name in this.valid
 }
