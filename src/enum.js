@@ -25,8 +25,9 @@ function RokEnum(name, title, opts) {
   // start off with empty 'valid' and 'selected'
   this.valid = {}
   this.selected = {}
-  // also store 'valid' names in an array so we can keep order
-  this.enums = []
+
+  // also store valid names in an array so we can keep order
+  this.names = []
 }
 inherits(RokEnum, Rok)
 
@@ -39,7 +40,7 @@ RokEnum.prototype.props = function props() {
 }
 
 RokEnum.prototype.objects = function props() {
-  return [ 'meta', 'valid', 'enums', 'selected', ]
+  return [ 'meta', 'valid', 'names', 'selected', ]
 }
 
 // Called by Rok.reset().
@@ -76,39 +77,72 @@ RokEnum.prototype.getMax = function getMax() {
 }
 
 RokEnum.prototype.add = function add(name, value) {
-  if ( value ) {
+  if ( typeof value !== 'undefined' ) {
     this.valid[name] = value
   }
   else {
     this.valid[name] = true
   }
-  this.enums.push({ name : name, value : value })
+
+  // remember the name in an array too
+  this.names.push(name)
+
   this.notify()
 }
 
 RokEnum.prototype.del = function del(name) {
+  var indexOf = this.names.indexOf(name)
+  if ( indexOf === -1 ) {
+    // not in names anyway, so nothing to do
+    return
+  }
+
+  // remove from `names`
+  this.names = this.names.slice(0, indexOf).append(this.names.slice(indexOf+1))
+
+  // remove from valid and selected (if there)
   delete this.valid[name]
-  // ToDo: also remove from `this.enums`
+  delete this.selected[name]
+
   this.notify()
 }
 
-// returns the names of all enums that are valid (not the enums)
+// returns every name allowed (not the values), in sorted order
 RokEnum.prototype.getAllValidNames = function getAllValidNames() {
-  return Object.keys(this.valid)
+  return Object.keys(this.valid).sort()
 }
 
-// returns this list of all enum objects (which all have (name, value))
+// returns an array of all { name : ..., value : ... }
+RokEnum.prototype.getAll = function getAll() {
+  var all = []
+
+  this.names.forEach(function(name) {
+    all.push({ name : name, value : this.valid[name] })
+  }.bind(this))
+
+  return all
+}
+
+// // returns this list of all values (all objects with both `name` and `value`)
+// RokEnum.prototype.getAllValues = function getAllValues() {
+//   return Object.values(this.valid).sort(function(a, b) {
+//     return a.name > b.name
+//   })
+// }
+
 RokEnum.prototype.getAllEnums = function getAllEnums() {
-  return this.enums
+  console.warn('Rok.RokEnum.getAllValues: deprecated, use getAllValues instead')
+  return this.getAllValues()
 }
 
-// returns the names of all enums selected (not the enums)
+// returns the names of all selected
 RokEnum.prototype.getAllSelected = function getAllSelected() {
-  return Object.keys(this.selected)
+  return Object.keys(this.selected).sort()
 }
 
-// returns an object of { name : true, ... } names
+// returns an object of { name : value, ... } names
 RokEnum.prototype.getSelectedAsObj = function getSelectedAsObj() {
+  console.warn('Rok.RokEnum.getSelectedAsObj: deprecated')
   var selected = {}
   Object.keys(this.selected).forEach(function(name) {
     selected[name] = true
@@ -117,7 +151,7 @@ RokEnum.prototype.getSelectedAsObj = function getSelectedAsObj() {
 }
 
 // returns just the string of the one selected, or null if none are selected
-RokEnum.prototype.getSelectedAsString = function getSelectedAsString() {
+RokEnum.prototype.getSelectedNameAsString = function getSelectedNameAsString() {
   if ( this.countSelected === 0 ) {
     return null
   }
@@ -137,6 +171,7 @@ RokEnum.prototype.get = function get(name) {
   return this.valid[name]
 }
 
+// returns the { name : '...', value : ... } object
 RokEnum.prototype.isSet = function isSet(name) {
   return !!this.selected[name]
 }
@@ -181,7 +216,7 @@ RokEnum.prototype.set = function set(name) {
   }
 
   // all good
-  this.selected[name] = true
+  this.selected[name] = this.valid[name]
   this.notify()
 }
 
@@ -204,9 +239,11 @@ RokEnum.prototype.toggle = function toggle(name) {
 
   // just call unset() or set() (which both emit 'notify')
   if ( name in this.selected ) {
+    console.log('Unsetting ' + name)
     this.unset(name)
   }
   else {
+    console.log('Setting ' + name)
     this.set(name)
   }
 }
