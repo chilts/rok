@@ -11,6 +11,8 @@ var Rok = require('./rok.js')
 // --------------------------------------------------------------------------------------------------------------------
 
 function RokEnum(name, title, opts) {
+  opts = opts || {}
+
   Rok.call(this)
 
   // simply call reset to set up our properties
@@ -23,6 +25,7 @@ function RokEnum(name, title, opts) {
   this.max   = opts.max || null
 
   // start off with empty 'valid' and 'selected'
+  this.all = []
   this.valid = {}
   this.selected = {}
 
@@ -40,7 +43,7 @@ RokEnum.prototype.props = function props() {
 }
 
 RokEnum.prototype.objects = function props() {
-  return [ 'meta', 'valid', 'names', 'selected', ]
+  return [ 'meta', 'all', 'valid', 'selected', 'names', ]
 }
 
 // Called by Rok.reset().
@@ -85,6 +88,7 @@ RokEnum.prototype.add = function add(name, value) {
   }
 
   // remember the name in an array too
+  this.all.push({ name : name, value : this.valid[name] })
   this.names.push(name)
 
   this.notify()
@@ -97,8 +101,9 @@ RokEnum.prototype.del = function del(name) {
     return
   }
 
-  // remove from `names`
+  // remove from `names` and 'all'
   this.names = this.names.slice(0, indexOf).append(this.names.slice(indexOf+1))
+  this.all = this.all.slice(0, indexOf).append(this.all.slice(indexOf+1))
 
   // remove from valid and selected (if there)
   delete this.valid[name]
@@ -107,102 +112,62 @@ RokEnum.prototype.del = function del(name) {
   this.notify()
 }
 
-// returns every name allowed (not the values), in sorted order
-RokEnum.prototype.getAllValidNames = function getAllValidNames() {
-  return Object.keys(this.valid).sort()
+// just returns how many names/values that are allowed
+RokEnum.prototype.count = function count() {
+  return this.all.length
 }
 
-// returns an array of all { name : ..., value : ... }
-RokEnum.prototype.getAll = function getAll() {
-  var all = []
-
-  this.names.forEach(function(name) {
-    all.push({ name : name, value : this.valid[name] })
-  }.bind(this))
-
-  return all
-}
-
-// // returns this list of all values (all objects with both `name` and `value`)
-// RokEnum.prototype.getAllValues = function getAllValues() {
-//   return Object.values(this.valid).sort(function(a, b) {
-//     return a.name > b.name
-//   })
-// }
-
-RokEnum.prototype.getAllEnums = function getAllEnums() {
-  console.warn('Rok.RokEnum.getAllValues: deprecated, use getAllValues instead')
-  return this.getAllValues()
-}
-
-// returns the names of all selected
-RokEnum.prototype.getAllSelected = function getAllSelected() {
-  return Object.keys(this.selected).sort()
-}
-
-// returns an object of { name : value, ... } names
-RokEnum.prototype.getSelectedAsObj = function getSelectedAsObj() {
-  console.warn('Rok.RokEnum.getSelectedAsObj: deprecated')
-  var selected = {}
-  Object.keys(this.selected).forEach(function(name) {
-    selected[name] = true
-  })
-  return selected
-}
-
-// returns just the string of the one selected, or null if none are selected
-RokEnum.prototype.getSelectedNameAsString = function getSelectedNameAsString() {
-  if ( this.countSelected === 0 ) {
-    return null
-  }
-  if ( this.countSelected > 1 ) {
-    throw new Error("Rok.Enum: can't get selected as a string if more than one are selected")
-  }
-
-  return this.getAllSelected()[0]
-}
+// --- validation ---
 
 RokEnum.prototype.isAllowed = function isAllowed(name) {
   return name in this.valid
 }
 
-// returns the { name : '...', value : ... } object
-RokEnum.prototype.get = function get(name) {
+// returns every name allowed (not the values) unsorted
+RokEnum.prototype.getAllValidNames = function getAllValidNames() {
+  return this.names
+}
+
+// gets all the valid values
+RokEnum.prototype.getAllValidValues = function getAllValidValues() {
+  return this.all.map(function(i) {
+    return i.value
+  })
+}
+
+// returns an array of all { name : ..., value : ... }
+RokEnum.prototype.getAllValid = function getAll() {
+  return this.all
+}
+
+// don't need a 'getName' (and besides, that function name already exists for the enum name)
+
+// returns the value for this name
+RokEnum.prototype.getValue = function getValue(name) {
+  // check this is valid
+  if ( !this.isAllowed(name) ) {
+    throw new Error("Rok.Enum.getValue: name '" + name +  "' for enum '" + this.name + "' is not a valid enumeration")
+  }
+
   return this.valid[name]
 }
 
-// returns the { name : '...', value : ... } object
-RokEnum.prototype.isSet = function isSet(name) {
-  return !!this.selected[name]
-}
-
-// returns the (meta) value stored with the enum
-RokEnum.prototype.getSelected = function getSelected(name) {
+// returns the { name : ..., value : ... } for this name
+RokEnum.prototype.get = function get(name) {
+  // check this is valid
   if ( !this.isAllowed(name) ) {
-    throw new Error("RokEnum: trying to get a selected enum '" + name + "' for enum '" + this.name + "' which isn't valid")
+    throw new Error("Rok.Enum.get: name '" + name +  "' for enum '" + this.name + "' is not a valid enumeration")
   }
 
-  // if selected, then return the enum value
-  if ( this.selected[name] ) {
-    return this.valid[name]
-  }
-
-  // not selected, just return null
-  return null
+  return { name : name, value : this.valid[name] }
 }
 
-RokEnum.prototype.countValid = function countValid() {
-  return Object.keys(this.valid).length
-}
-
-RokEnum.prototype.countSelected = function countSelected() {
-  return Object.keys(this.selected).length
-}
+// --- get/set ---
 
 RokEnum.prototype.set = function set(name) {
-  // check that this val is valid
+  // check this is valid
   if ( !this.isAllowed(name) ) {
-    throw new Error("RokEnum: name '" + name +  "' for enum '" + this.name + "' is not a valid enumeration")
+    throw new Error("Rok.Enum.set: name '" + name +  "' for enum '" + this.name + "' is not a valid enumeration")
   }
 
   // if this name is already set, do nothing and return
@@ -215,8 +180,11 @@ RokEnum.prototype.set = function set(name) {
     throw new Error("RokEnum: trying to set too many selections (allowed: " + this.getMax() + ", currently: " + this.countSelected() + ")")
   }
 
+  console.log(this.selected)
+
   // all good
-  this.selected[name] = this.valid[name]
+  this.selected[name] = true
+  console.log(this.selected)
   this.notify()
 }
 
@@ -266,6 +234,79 @@ RokEnum.prototype.setTo = function setTo(name, to) {
 RokEnum.prototype.clearSelected = function clearSelected() {
   this.selected = {}
   this.notify()
+}
+
+// returns true/false
+RokEnum.prototype.isSet = function isSet(name) {
+  return !!this.selected[name]
+}
+
+// --- selected ---
+
+RokEnum.prototype.countSelected = function countSelected() {
+  return Object.keys(this.selected).length
+}
+
+// returns an array of names of all selected unsorted
+RokEnum.prototype.getAllSelectedNames = function getAllSelectedNames() {
+  return Object.keys(this.selected)
+}
+
+// returns an array of values of all selected unsorted
+RokEnum.prototype.getAllSelectedValues = function getAllSelectedValues() {
+  return Object.keys(this.selected).map(function(name) {
+    return this.valid[name]
+  }.bind(this))
+}
+
+// returns an array of { name : ..., value : ... } of all selected unsorted
+RokEnum.prototype.getAllSelected = function getAllSelected() {
+  return Object.keys(this.selected).map(function(name) {
+    return { name : name, value : this.valid[name] }
+  }.bind(this))
+}
+
+// --- helper functions when you know there will be zero or at most one selected ---
+
+// returns the selected name
+RokEnum.prototype.getSelectedName = function getSelectedName() {
+  var countSelected = this.countSelected()
+  if ( countSelected === 0 ) {
+    return null
+  }
+  if ( countSelected > 1 ) {
+    throw new Error("Rok.Enum: can't get selected as a single name if more than one are selected")
+  }
+
+  return Object.keys(this.selected)[0]
+}
+
+// returns the selected value only
+RokEnum.prototype.getSelectedValue = function getSelectedValue() {
+  var countSelected = this.countSelected()
+  if ( countSelected === 0 ) {
+    return null
+  }
+  if ( countSelected > 1 ) {
+    throw new Error("Rok.Enum: can't get selected as a single value if more than one are selected")
+  }
+
+  var name = Object.keys(this.selected)[0]
+  return this.valid[name]
+}
+
+// returns the selected { name : ..., value : ... } only
+RokEnum.prototype.getSelected = function getSelected() {
+  var countSelected = this.countSelected()
+  if ( countSelected === 0 ) {
+    return null
+  }
+  if ( countSelected > 1 ) {
+    throw new Error("Rok.Enum: can't get selected as a single value if more than one are selected")
+  }
+
+  var name = Object.keys(this.selected)[0]
+  return{ name : name, value : this.valid[name] }
 }
 
 // --------------------------------------------------------------------------------------------------------------------
