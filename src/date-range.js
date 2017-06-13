@@ -187,6 +187,8 @@ RokDateRange.prototype._resetProps = function _resetProps() {
   this.editEnd = ''
 }
 
+// --- type fields ---
+
 RokDateRange.prototype.getName = function getName() {
   return this.name
 }
@@ -232,6 +234,8 @@ RokDateRange.prototype.setMeta = function setMeta(meta) {
   this.meta = meta
   this.notify()
 }
+
+// --- value fields ---
 
 RokDateRange.prototype.getStart = function getStart() {
   return this.start

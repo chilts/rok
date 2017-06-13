@@ -39,7 +39,7 @@ function RokEnumTri(name, title, opts, meta) {
 inherits(RokEnumTri, Rok)
 
 RokEnumTri.prototype.type = function type() {
-  return 'EnumTi'
+  return 'EnumTri'
 }
 
 RokEnumTri.prototype.props = function props() {
@@ -188,7 +188,7 @@ RokEnumTri.prototype.countIgnored = function countIgnored() {
 RokEnumTri.prototype.setInclude = function setInclude(name) {
   // check that this val is valid
   if ( !this.isAllowed(name) ) {
-    throw new Error("RokEnumTri.include: name '" + name +  "' for enum '" + this.name + "' is not a valid name")
+    throw new Error("Rok.EnumTri.include: name '" + name +  "' for enum '" + this.name + "' is not a valid name")
   }
 
   // if this name is already set, do nothing and return
@@ -205,7 +205,7 @@ RokEnumTri.prototype.setInclude = function setInclude(name) {
 RokEnumTri.prototype.setExclude = function setExclude(name) {
   // check that this val is valid
   if ( !this.isAllowed(name) ) {
-    throw new Error("RokEnumTri.exclude: name '" + name +  "' for enum '" + this.name + "' is not a valid name")
+    throw new Error("Rok.EnumTri.exclude: name '" + name +  "' for enum '" + this.name + "' is not a valid name")
   }
 
   // if this name is already set, do nothing and return
@@ -222,7 +222,7 @@ RokEnumTri.prototype.setExclude = function setExclude(name) {
 RokEnumTri.prototype.setIgnore = function setIgnore(name) {
   // check that this val is valid
   if ( !this.isAllowed(name) ) {
-    throw new Error("RokEnumTri.ignore: name '" + name +  "' for enum '" + this.name + "' is not a valid name")
+    throw new Error("Rok.EnumTri.ignore: name '" + name +  "' for enum '" + this.name + "' is not a valid name")
   }
 
   // if this name is already set, do nothing and return
@@ -240,12 +240,12 @@ RokEnumTri.prototype.setIgnore = function setIgnore(name) {
 RokEnumTri.prototype.set = function set(name, to) {
   // check that this name is valid
   if ( !this.isAllowed(name) ) {
-    throw new Error("RokEnumTri.set: name '" + name +  "' for enum '" + this.name + "' is not a valid name")
+    throw new Error("Rok.EnumTri.set: name '" + name +  "' for enum '" + this.name + "' is not a valid name")
   }
 
   // check that 'to' is 'include', 'exclude', or 'ignore'
   if ( to !== C_INCLUDE && to !== C_EXCLUDE && to !== C_INCLUDE ) {
-    throw new Error("RokEnumTri.set: invalid 'to' (" + ( to || '[undefined]' ) + "), should be one of :", [ C_INCLUDE, C_EXCLUDE, C_IGNORE ].join(', '))
+    throw new Error("Rok.EnumTri.set: invalid 'to' (" + ( to || '[undefined]' ) + "), should be one of :", [ C_INCLUDE, C_EXCLUDE, C_IGNORE ].join(', '))
   }
 
   delete this.include[name]
