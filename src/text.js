@@ -13,9 +13,6 @@ var Rok = require('./rok.js')
 function RokText(name, title, opts, meta) {
   Rok.call(this)
 
-  // simply call reset to set up our properties
-  this.reset()
-
   // set some of the properties from the incoming args
   this.name  = name || ''
   this.title = title || ''
