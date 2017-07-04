@@ -155,15 +155,18 @@ RokList.prototype.sort = function sort(key) {
 }
 
 RokList.prototype.findIndex = function findIndex(key, value) {
-  return this.list.findIndex(function(item) {
-    return item[key] === value
-  })
+  for (var i = 0; i < this.list.length; ++i) {
+    if ( this.list[i][key] === value ) {
+      return i
+    }
+  }
+  return -1;
 }
 
 RokList.prototype.find = function find(key, value) {
-  return this.list.find(function(item) {
-    return item[key] === value
-  })
+  var index = this.findIndex(key, value)
+  if ( index === -1 ) return
+  return this.list[index]
 }
 
 // --------------------------------------------------------------------------------------------------------------------

@@ -124,7 +124,7 @@ test('some sort stuff', function(t) {
 })
 
 test('find and findIndex', function(t) {
-  t.plan(14)
+  t.plan(17)
 
   var e = new Rok.List('list', 'A List')
 
@@ -137,16 +137,19 @@ test('find and findIndex', function(t) {
   t.equal(e.findIndex("p", 1), 3, "findIndex p=1 worked")
   t.equal(e.findIndex("p", 2), 2, "findIndex p=2 worked")
   t.equal(e.findIndex("p", 3), 0, "findIndex p=3 worked")
+  t.equal(e.findIndex("p", 5), -1, "findIndex p=5 didn't return anything as expected")
 
   t.deepEqual(e.find("p", 0), {"p":0,t:"Hello"}, "find p=0 worked")
   t.deepEqual(e.find("p", 1), {"p":1,t:"Yo"}, "find p=1 worked")
   t.deepEqual(e.find("p", 2), {"p":2,t:"Ola"}, "find p=2 worked")
   t.deepEqual(e.find("p", 3), {"p":3,t:"Hi"}, "find p=3 worked")
+  t.ok(!e.find("p", 5), "find p=5 didn't return anything as expected")
 
   t.equal(e.findIndex("t", "Hi"), 0, "find t=Hi worked")
   t.equal(e.findIndex("t", "Hello"), 1, "find t=Hello worked")
   t.equal(e.findIndex("t", "Ola"), 2, "find t=Ola worked")
   t.equal(e.findIndex("t", "Yo"), 3, "find t=Yo worked")
+  t.equal(e.findIndex("t", "Blah"), -1, "find t=Blah didn't work as expected")
 
   t.equal(e.findIndex("x", "whatever"), -1, "findIndex x didn't work (as expected)")
   t.equal(e.find("x", "whatever"), undefined, "find x didn't work (as expected)")
