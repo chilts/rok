@@ -180,11 +180,8 @@ RokEnum.prototype.set = function set(name) {
     throw new Error("RokEnum: trying to set too many selections (allowed: " + this.getMax() + ", currently: " + this.countSelected() + ")")
   }
 
-  console.log(this.selected)
-
   // all good
   this.selected[name] = true
-  console.log(this.selected)
   this.notify()
 }
 
@@ -207,11 +204,9 @@ RokEnum.prototype.toggle = function toggle(name) {
 
   // just call unset() or set() (which both emit 'notify')
   if ( name in this.selected ) {
-    console.log('Unsetting ' + name)
     this.unset(name)
   }
   else {
-    console.log('Setting ' + name)
     this.set(name)
   }
 }

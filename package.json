@@ -6,12 +6,12 @@
   "scripts": {
     "test": "set -e; for FILE in test/*.js; do node $FILE; done"
   },
-  "author": "Andrew Chilton <andychilton@gmail.com>",
-  "license": "ISC",
   "dependencies": {
     "inherits": "^2.0.3"
   },
   "devDependencies": {
     "tape": "^4.6.2"
-  }
+  },
+  "author": "Andrew Chilton <andychilton@gmail.com>",
+  "license": "ISC"
 }

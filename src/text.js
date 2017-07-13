@@ -63,19 +63,8 @@ RokText.prototype.getMeta = function getMeta() {
 
 // --- value fields ---
 
-RokText.prototype.get = function get() {
-  console.warn("DEPRECATED: Rok.Text.get() - use Rok.Text.getText() instead")
-  return this.text
-}
-
 RokText.prototype.getText = function getText() {
   return this.text
-}
-
-RokText.prototype.set = function set(text) {
-  console.warn("DEPRECATED: Rok.Text.set() - use Rok.Text.setText() instead")
-  this.text = text
-  this.notify()
 }
 
 RokText.prototype.setText = function setText(text) {

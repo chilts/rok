@@ -81,6 +81,7 @@ var dates = {
   },
   string: function(d) {
     d = this.convert(d)
+    if ( !d ) return ''
     var mth = d.getUTCMonth() + 1
     var day = d.getUTCDate()
     var year = 1900 + d.getYear()
@@ -88,6 +89,7 @@ var dates = {
   },
   iso: function(d) {
     d = this.convert(d)
+    if ( !d ) return ''
     var mth = d.getUTCMonth() + 1
     var day = d.getUTCDate()
     var year = 1900 + d.getYear()
@@ -95,6 +97,7 @@ var dates = {
   },
   title: function(d) {
     d = this.convert(d)
+    if ( !d ) return ''
     var mth = d.getUTCMonth() + 1
     var day = d.getUTCDate()
     var year = 1900 + d.getYear()
@@ -245,7 +248,6 @@ RokDateRange.prototype.getStart = function getStart() {
 // was a problem. null is returned upon success.
 RokDateRange.prototype.setStart = function setStart(start) {
   var d = dates.convert(start)
-  console.log('d:' + d)
 
   // check this date is valid
   if ( isNaN(d) ) {
@@ -284,7 +286,6 @@ RokDateRange.prototype.getEnd = function getEnd() {
 // was a problem. null is return upon success.
 RokDateRange.prototype.setEnd = function setEnd(end) {
   var d = dates.convert(end)
-  console.log('d:' + d)
 
   // check this date is valid
   if ( isNaN(d) ) {
@@ -316,14 +317,12 @@ RokDateRange.prototype.setEnd = function setEnd(end) {
 }
 
 RokDateRange.prototype.removeStart = function removeStart() {
-  console.log('Rok.DateRange.removeStart()')
   this.start = null
   this.editStart = ''
   this.notify()
 }
 
 RokDateRange.prototype.removeEnd = function removeEnd() {
-  console.log('Rok.DateRange.removeEnd()')
   this.end = null
   this.editEnd = ''
   this.notify()
@@ -332,7 +331,6 @@ RokDateRange.prototype.removeEnd = function removeEnd() {
 RokDateRange.prototype.applyEditStart = function applyEditStart() {
   // okay, whatever we have in editStart, we need to set it into the start
   var str = this.editStart
-  console.log('got start = ' + str)
 
   var iso = dates.isValidDDsMMsYYYY(str)
   if ( iso ) {
@@ -350,7 +348,6 @@ RokDateRange.prototype.applyEditStart = function applyEditStart() {
 RokDateRange.prototype.applyEditEnd = function applyEditEnd() {
   // okay, whatever we have in editEnd, we need to set it into the end
   var str = this.editEnd
-  console.log('got end = ' + str)
 
   var iso = dates.isValidDDsMMsYYYY(str)
   if ( iso ) {
@@ -367,7 +364,6 @@ RokDateRange.prototype.applyEditEnd = function applyEditEnd() {
 RokDateRange.prototype.setEditStart = function setEditStart(str) {
   // always set what we've been given (exactly as they gave it)
   this.editStart = str
-  console.log ('>> date=' + str)
   this.notify()
 }
 
@@ -378,7 +374,6 @@ RokDateRange.prototype.getEditStart = function getEditStart() {
 RokDateRange.prototype.setEditEnd = function setEditEnd(str) {
   // always set what we've been given (exactly as they gave it)
   this.editEnd = str
-  console.log ('>> date=' + str)
   this.notify()
 }
 

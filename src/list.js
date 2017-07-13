@@ -160,7 +160,7 @@ RokList.prototype.findIndex = function findIndex(key, value) {
       return i
     }
   }
-  return -1;
+  return -1
 }
 
 RokList.prototype.find = function find(key, value) {

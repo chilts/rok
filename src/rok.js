@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 function Rok() {
-  console.log('Rok: constructor')
+  // console.log('Rok: constructor')
   this.listeners = []
 }
 
@@ -51,6 +51,7 @@ Rok.prototype._resetStores = function _resetStores() {
 }
 
 Rok.prototype.reset = function reset() {
+  // console.log('Rok.reset():', this)
   this._resetProps()
   this._resetObjects()
   this._resetStores()
@@ -78,13 +79,10 @@ Rok.prototype.extract = function extract() {
 
   // get a copy of all sub-stores
   this.stores().forEach(function(name) {
-    // console.log('name=' + name)
     if ( this[name] ) {
-      // console.log('- extract:', this[name].extract())
       data[name] = this[name].extract()
     }
     else {
-      // console.log('- nothing')
       data[name] = null
     }
   }.bind(this))
