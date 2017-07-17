@@ -17,7 +17,7 @@ function RokText(name, title, opts, meta) {
   this.name  = name || ''
   this.title = title || ''
 
-  // save the meta info
+  // save opts and meta
   this.opts = opts || {}
   this.meta = meta || {}
 

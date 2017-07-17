@@ -155,18 +155,16 @@ var dates = {
 function RokDateRange(name, title, opts, meta) {
   Rok.call(this)
 
+  // set some of the properties from the incoming args
+  this.name = name || ''
+  this.title = title || ''
+
+  // save opts and meta
+  this.opts = opts || {}
+  this.meta = meta || {}
+
   // simply call reset to set up our properties
   this.reset()
-
-  // set some of the properties from the incoming args
-  this.name = name
-  this.title = title
-
-  // currently there are no opts that we use
-  this.opts = opts || {}
-
-  // just remember the meta without interpreting it in any way
-  this.meta = meta || {}
 }
 inherits(RokDateRange, Rok)
 
@@ -407,6 +405,8 @@ RokDateRange.prototype.max = function max(a, b) {
   return dates.iso(b)
 }
 
+// --- query ---
+
 RokDateRange.prototype.isValidEditStart = function isValidEditStart() {
   if ( this.editStart === '' ) {
     return true
@@ -419,6 +419,22 @@ RokDateRange.prototype.isValidEditEnd = function isValidEditEnd() {
     return true
   }
   return dates.isValidDDsMMsYYYY(this.editEnd)
+}
+
+RokDateRange.prototype.hasStart = function hasStart() {
+  return !!this.start
+}
+
+RokDateRange.prototype.hasEnd = function hasEnd() {
+  return !!this.end
+}
+
+RokDateRange.prototype.hasEither = function hasEither() {
+  return !!this.start || !!this.end
+}
+
+RokDateRange.prototype.hasBoth = function hasBoth() {
+  return !!this.start && !!this.end
 }
 
 // --------------------------------------------------------------------------------------------------------------------
